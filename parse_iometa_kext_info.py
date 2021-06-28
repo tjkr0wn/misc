@@ -3,6 +3,16 @@ import sys
 import linecache
 
 dump_file_handle = None
+pacs = list()
+class_names = list()
+addresses = list()
+func_names = list()
+
+def clear_globals():
+    pacs = list()
+    class_names = list()
+    addresses = list()
+    func_names = list()
 
 def file_len(h):
     for i, l in enumerate(h):
@@ -17,10 +27,6 @@ def parse_line(l):
     if "pac" not in l:
         return
 
-    pacs = list()
-    class_names = list()
-    addresses = list()
-    func_names = list()
 
     class_name_b = None
     class_name = str()
@@ -51,7 +57,7 @@ def parse_line(l):
         addr = hex(int(l[i+5:i+24], 0))
         addresses.append(addr)
 
-    print("pac: {}, class name: {}, function address: {}, function: {}".format(pac, class_name, addr, func_name))
+    #print("pac: {}, class name: {}, function address: {}, function: {}".format(pac, class_name, addr, func_name))
     return (pacs, class_names, func_names, addresses)
 
 def main(kinfo):
@@ -61,11 +67,23 @@ def main(kinfo):
 
     for l in range(0, file_len(handles[0])):
         base_info = parse_line(linecache.getline(kinfo[0], l))
+        #print(base_info)
+
+    clear_globals()
 
     for z in range(0, file_len(handles[1])):
         strip_info = parse_line(linecache.getline(kinfo[1], z))
 
     #TODO: Check for matching properties and writeout
+
+    for y in range(0, len(base_info[0])):
+        if base_info[0][y] == strip_info[0][y]:
+            if base_info[1][y] == strip_info[1][y]:
+                print("pac: {}, virtual method: {}, address: {}".format(base_info[0][y], base_info[1][y] + "::" + base_info[2][y], strip_info[3][y]))
+            else:
+                quit("class mismatch")
+        else:
+            quit("pac mismatch")
 
 if __name__ == '__main__':
     try:
