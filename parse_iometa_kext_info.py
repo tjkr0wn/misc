@@ -67,7 +67,7 @@ def main(kinfo):
 
     for y in range(0, len(base_info[0])):
         if base_info[0][y] == strip_info[0][y]:
-            if base_info[1][y] == strip_info[1][y]:
+            #if base_info[1][y] == strip_info[1][y]:, don't think class names must be matching.
                 print("pac: {}, virtual method: {}, address: {}".format(base_info[0][y], base_info[1][y] + "::" + base_info[2][y], strip_info[3][y]))
         else:
             quit("pac mismatch")
